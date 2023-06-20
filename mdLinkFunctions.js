@@ -22,15 +22,21 @@ function pathIsAbsolute(route) {
 }
 
 //funcion es directorio o no.
+//fs.stat metodo que retornainformacion del archivo o directotio entregado.
 function dirOrFile(route) {
   fs.stat(route, (err, stats) => {
     if (!err) {
-      if (stats.isDirectory) {
+      //const dirFile = (stats.isDirectory()) ? true : false;
+
+      if (stats.isDirectory()) {
         console.log('Es un direcotorio ' + stats.isDirectory())
-        console.log(fs.readdirSync(route));;
+        const dirContent = fs.readdirSync(route);
+        console.log(dirContent);
       }
-      else {
+      else if (stats.isFile()) {
         console.log('Es un archivo ' + stats.isFile());
+        // const fileContent ;
+        //console.log(fileContent);
       };
     }
     else

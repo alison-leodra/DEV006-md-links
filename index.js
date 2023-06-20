@@ -21,15 +21,15 @@ const mdLinks = (ruta, options) => {
   dirOrFile(rutaNueva);
 
 
-  //fs.stat metodo que retornainformacion del archivo o directotio entregado.
+
 
 }
 
 mdLinks(route);
 
-// hacer funcion saber si ruta existente LISTOcd
-// hacer funcion ruta relativa o absoluta, en caso de relativa tranformar a absoluta LISTO ARREGLAR
-// hacer funcion ruta directorio o archivo LISTO
+// hacer funcion saber si ruta existente LISTO
+// hacer funcion ruta relativa o absoluta, en caso de relativa tranformar a absoluta LISTO 
+// hacer funcion ruta directorio o archivo LISTO 
 // hacer ruta para ver archivos dentro de directorio con extension md
 // leer archivo md
 // verificar o no links
