@@ -1,28 +1,35 @@
-const rutaSoloMD = 'C:/Users/localhost/Desktop/laboratoria/proyecto4/pruena01.md';
-const rutaDirectorio = 'C:/Users/localhost/Desktop/laboratoria/proyecto4';
-const rutaRelativa1 = '../../proyecto4/pruena01.md';
-const rutarelativa2 = '../../proyecto4';
-const rutaImagen = '"C:/Users/localhost/Desktop/Pruebas/isla.png'
-const relativa3 = 'README.md';
+/*
+C:/Users/localhost/Desktop/laboratoria/proyecto4/pruena01.md
 
+C:/Users/localhost/Desktop/laboratoria/pruebaDirectorio/prueba02.md
+
+C:/Users/localhost/Desktop/laboratoria/proyecto4
+
+../../proyecto4/pruena01.md
+
+../../pruebaDirectorio/prueba02.md
+
+../../proyecto4
+
+"C:/Users/localhost/Desktop/Pruebas/isla.png
+
+README.md
+*/
 
 const route = process.argv[2];
 const path = require('path');
 const fs = require('fs');
-const { pathIsAbsolute, pathExist, dirOrFile } = require('./mdLinkFunctions');
+const { pathIsAbsolute, pathExist, dirOrFile, readRoute } = require('./mdLinkFunctions');
 
 
 const mdLinks = (ruta, options) => {
   //return new Promise((resolve, reject) => {
   // }
   // no funciona bien con rutas relativas.
-  const rutaNueva = pathIsAbsolute(ruta);
-  pathExist(rutaNueva);
-  dirOrFile(rutaNueva);
-
-
-
-
+  const newRoute = pathIsAbsolute(ruta);
+  pathExist(newRoute);
+  const kindOfElement = dirOrFile(newRoute);
+  readRoute(route, kindOfElement);
 }
 
 mdLinks(route);

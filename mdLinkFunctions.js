@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { rejects } = require('assert');
 
 //funcion verificar existencia de ruta.
 function pathExist(route) {
@@ -21,27 +22,67 @@ function pathIsAbsolute(route) {
   }
 }
 
-//funcion es directorio o no.
-//fs.stat metodo que retornainformacion del archivo o directotio entregado.
+
+//funcion directorio o archivo
 function dirOrFile(route) {
+
+  try {
+    if (fs.lstatSync(route).isDirectory()) {
+      console.log("Es directorio");
+      return true;
+    }
+    else {
+      console.log("Es archivo");
+      return false;
+    }
+  }
+  catch (err) {
+    console.log("error");
+  }
+
+  /*
   fs.stat(route, (err, stats) => {
     if (!err) {
-      //const dirFile = (stats.isDirectory()) ? true : false;
-
       if (stats.isDirectory()) {
-        console.log('Es un direcotorio ' + stats.isDirectory())
-        const dirContent = fs.readdirSync(route);
-        console.log(dirContent);
+        console.log('Es un direcotorio ')
       }
-      else if (stats.isFile()) {
-        console.log('Es un archivo ' + stats.isFile());
-        // const fileContent ;
-        //console.log(fileContent);
+      else {
+        console.log('Es un archivo ');
       };
     }
-    else
+    else {
       throw err;
+    }
   });
+  */
+
+}
+
+//funcion sacar archivo md
+/*
+function extractFiles (route){
+      const dirContent = fs.readdirSync(route);
+    console.log("llego a leer directorio");
+    console.log(dirContent);
+    //const newPath = path.join(route,element)
+    dirContent.forEach(element => console.log(path.join(route, element)));
+}
+*/
+
+//funcion leer archivo o directorio dependiendo de el resultado booleano.
+function readRoute(route, type) {
+  if (type) {
+    const dirContent = fs.readdirSync(route);
+    console.log("llego a leer directorio");
+    console.log(dirContent);
+    //const newPath = path.join(route,element)
+    dirContent.forEach(element => console.log(path.join(route, element)));
+  }
+  else {
+    const fileExt = path.extname(route);
+    console.log("llego a leer archivo");
+    console.log(fileExt);
+  }
 }
 
 
@@ -49,5 +90,6 @@ module.exports = {
   pathIsAbsolute,
   pathExist,
   dirOrFile,
+  readRoute,
 }
 
