@@ -8,7 +8,6 @@ function pathExist(route) {
   return fs.existsSync(route)
 }
 
-
 //Funcion absoluta o relativa, si es relativa se tranforma a absoluta.
 function pathIsAbsolute(route) {
   if (path.isAbsolute(route)) {
@@ -21,7 +20,6 @@ function pathIsAbsolute(route) {
     return newRoute;
   }
 }
-
 
 //funcion directorio o archivo
 function dirOrFile(route) {
@@ -40,49 +38,34 @@ function dirOrFile(route) {
     console.log("error");
   }
 
-  /*
-  fs.stat(route, (err, stats) => {
-    if (!err) {
-      if (stats.isDirectory()) {
-        console.log('Es un direcotorio ')
-      }
-      else {
-        console.log('Es un archivo ');
-      };
-    }
-    else {
-      throw err;
-    }
-  });
-  */
-
 }
 
-//funcion sacar archivo md
-/*
-function extractFiles (route){
-      const dirContent = fs.readdirSync(route);
-    console.log("llego a leer directorio");
-    console.log(dirContent);
-    //const newPath = path.join(route,element)
-    dirContent.forEach(element => console.log(path.join(route, element)));
+//funcion sacar archivo md.
+function extractFiles(route) {
+  const dirContent = fs.readdirSync(route);
+  console.log("llego a extraer archivos md");
+  const dirFile = dirContent.filter(path => path.includes(".md"));
+  const newPath = dirFile.map(element => path.join(route, element))
+  console.log(newPath);
+
+  return newPath;
 }
-*/
+
 
 //funcion leer archivo o directorio dependiendo de el resultado booleano.
-function readRoute(route, type) {
-  if (type) {
-    const dirContent = fs.readdirSync(route);
-    console.log("llego a leer directorio");
-    console.log(dirContent);
-    //const newPath = path.join(route,element)
-    dirContent.forEach(element => console.log(path.join(route, element)));
-  }
-  else {
-    const fileExt = path.extname(route);
-    console.log("llego a leer archivo");
-    console.log(fileExt);
-  }
+function readRoute(route) {
+  const fileExt = path.extname(route);
+  console.log("llego a leer archivo");
+  console.log(fileExt);
+
+  fs.readFile(route, 'utf-8', (err, data) => {
+    if (err) {
+      console.log('error: ', err);
+    } else {
+      console.log(data);
+    }
+  });
+
 }
 
 
@@ -91,5 +74,6 @@ module.exports = {
   pathExist,
   dirOrFile,
   readRoute,
+  extractFiles,
 }
 

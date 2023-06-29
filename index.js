@@ -19,17 +19,29 @@ README.md
 const route = process.argv[2];
 const path = require('path');
 const fs = require('fs');
-const { pathIsAbsolute, pathExist, dirOrFile, readRoute } = require('./mdLinkFunctions');
+const { pathIsAbsolute, pathExist, dirOrFile, readRoute, extractFiles } = require('./mdLinkFunctions');
 
 
 const mdLinks = (ruta, options) => {
   //return new Promise((resolve, reject) => {
   // }
-  // no funciona bien con rutas relativas.
-  const newRoute = pathIsAbsolute(ruta);
+  //funcion Ruta absoluta o relativa
+  let newRoute = pathIsAbsolute(ruta);
+
+  //funcion Ruta existente
   pathExist(newRoute);
-  const kindOfElement = dirOrFile(newRoute);
-  readRoute(route, kindOfElement);
+
+  //funcion Directorio o archivo boolean
+  const typeOf = dirOrFile(newRoute);
+
+  //Si es directorio sacar solo archivo ext md.
+  if (typeOf) {
+    newRoute = extractFiles(route);
+    return newRoute;
+  }
+
+  //leer archivo ext md.
+  readRoute(newRoute);
 }
 
 mdLinks(route);
@@ -49,4 +61,3 @@ module.exports = {
   mdLinks
 };
 
-// hay que arreglar, tira false en existente si es ruta absoluta.
