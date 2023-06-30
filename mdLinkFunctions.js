@@ -41,31 +41,28 @@ function dirOrFile(route) {
 }
 
 //funcion sacar archivo md.
-function extractFiles(route) {
-  const dirContent = fs.readdirSync(route);
-  console.log("llego a extraer archivos md");
-  const dirFile = dirContent.filter(path => path.includes(".md"));
-  const newPath = dirFile.map(element => path.join(route, element))
-  console.log(newPath);
+function extractFiles(typeOf, route) {
+  if (typeOf) {
+    const dirContent = fs.readdirSync(route);
+    console.log("llego a extraer archivos md");
+    const dirFile = dirContent.filter(path => path.includes(".md"));
+    const newPath = dirFile.map(element => path.join(route, element))
+    return newPath[0];
+  }
+  else {
 
-  return newPath;
+    return route;
+  }
 }
 
+//hacer funcion en que entre el dir o file y ahi sacar una ruta definitiva si entra en el primer if o segundo if.
 
-//funcion leer archivo o directorio dependiendo de el resultado booleano.
+//funcion leer archivo.
+//seguir viendo markdown it libreria.
 function readRoute(route) {
   const fileExt = path.extname(route);
   console.log("llego a leer archivo");
   console.log(fileExt);
-
-  fs.readFile(route, 'utf-8', (err, data) => {
-    if (err) {
-      console.log('error: ', err);
-    } else {
-      console.log(data);
-    }
-  });
-
 }
 
 

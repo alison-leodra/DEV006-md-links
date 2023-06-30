@@ -23,33 +23,29 @@ const { pathIsAbsolute, pathExist, dirOrFile, readRoute, extractFiles } = requir
 
 
 const mdLinks = (ruta, options) => {
-  //return new Promise((resolve, reject) => {
-  // }
-  //funcion Ruta absoluta o relativa
-  let newRoute = pathIsAbsolute(ruta);
+  return new Promise((resolve, reject) => {
+    // }
+    //funcion Ruta absoluta o relativa
+    let newRoute = pathIsAbsolute(ruta);
 
-  //funcion Ruta existente
-  pathExist(newRoute);
+    //funcion Ruta existente
+    pathExist(newRoute);
 
-  //funcion Directorio o archivo boolean
-  const typeOf = dirOrFile(newRoute);
+    //funcion Directorio o archivo boolean
+    const typeOf = dirOrFile(newRoute);
+    console.log(typeOf);
+    //Si es directorio sacar solo archivo ext md.
 
-  //Si es directorio sacar solo archivo ext md.
-  if (typeOf) {
-    newRoute = extractFiles(route);
-    return newRoute;
-  }
-
-  //leer archivo ext md.
-  readRoute(newRoute);
+    newRoute = extractFiles(typeOf, route);
+    console.log(newRoute);
+    //leer archivo ext md.
+    readRoute(newRoute);
+  })
 }
 
 mdLinks(route);
 
-// hacer funcion saber si ruta existente LISTO
-// hacer funcion ruta relativa o absoluta, en caso de relativa tranformar a absoluta LISTO 
-// hacer funcion ruta directorio o archivo LISTO 
-// hacer ruta para ver archivos dentro de directorio con extension md
+
 // leer archivo md
 // verificar o no links
 // devolver promesa con array con datos.
