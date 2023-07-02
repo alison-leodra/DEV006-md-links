@@ -19,6 +19,10 @@ README.md
 const route = process.argv[2];
 const path = require('path');
 const fs = require('fs');
+const md = require('markdown-it')({
+  html: true,
+  linkify: true,
+});
 const { pathIsAbsolute, pathExist, dirOrFile, readRoute, extractFiles } = require('./mdLinkFunctions');
 
 

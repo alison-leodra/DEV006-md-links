@@ -1,10 +1,16 @@
 const path = require('path');
 const fs = require('fs');
+const md = require('markdown-it')({
+  html: true,
+  linkify: true,
+});
 const { rejects } = require('assert');
+const { error } = require('console');
 
 //funcion verificar existencia de ruta.
 function pathExist(route) {
-  console.log("Existente: ", fs.existsSync(route)) // Se puede usar esta?
+
+  console.log("Existente: ", fs.existsSync(route));
   return fs.existsSync(route)
 }
 
@@ -63,6 +69,32 @@ function readRoute(route) {
   const fileExt = path.extname(route);
   console.log("llego a leer archivo");
   console.log(fileExt);
+
+  try {
+    if (fileExt === ".md") {
+      fs.readFile(route, 'utf-8', (err, data) => {
+        if (err) {
+          console.log('error: ', err);
+        } else {
+          console.log(md.linkify.match(data));
+        }
+      })
+    }
+    else {
+      throw error;
+    }
+
+  } catch (error) {
+    console.error("El archivo no es markdown")
+
+  }
+
+
+
+
+
+
+
 }
 
 
