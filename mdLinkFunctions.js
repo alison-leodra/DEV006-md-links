@@ -76,7 +76,11 @@ function readRoute(route) {
         if (err) {
           console.log('error: ', err);
         } else {
-          console.log(md.linkify.match(data));
+          // console.log(md.linkify.match(data));
+          const linkExtracted = md.linkify.match(data);
+          const arrayLinks = linkExtracted.map(element => element.url);
+          console.log(arrayLinks);
+          return arrayLinks;
         }
       })
     }
@@ -88,12 +92,9 @@ function readRoute(route) {
     console.error("El archivo no es markdown")
 
   }
+}
 
-
-
-
-
-
+function linkProperties(route, arrayLinks) {
 
 }
 

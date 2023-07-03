@@ -41,16 +41,15 @@ const mdLinks = (ruta, options) => {
     //Si es directorio sacar solo archivo ext md.
 
     newRoute = extractFiles(typeOf, route);
-    console.log(newRoute);
+    console.log(newRoute); // esta devuelve ruta del archivo md
     //leer archivo ext md.
-    readRoute(newRoute);
+    const arrayLinks = readRoute(newRoute); // esta devuelve array con link encontrados.
   })
 }
 
 mdLinks(route);
 
 
-// leer archivo md
 // verificar o no links
 // devolver promesa con array con datos.
 
