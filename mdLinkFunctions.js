@@ -5,16 +5,16 @@ const md = require('markdown-it')({
   linkify: true,
 });
 const { rejects } = require('assert');
-const { error } = require('console');
+const { error, log } = require('console');
 
-//funcion verificar existencia de ruta.
+//funcion verificar existencia de ruta, retorna true si el archivo existe
 function pathExist(route) {
 
   console.log("Existente: ", fs.existsSync(route));
   return fs.existsSync(route)
 }
 
-//Funcion absoluta o relativa, si es relativa se tranforma a absoluta.
+//Funcion absoluta o relativa, si es relativa se tranforma a absoluta, retorna la ruta absoluta.
 function pathIsAbsolute(route) {
   if (path.isAbsolute(route)) {
     console.log("La ruta es absoluta");
@@ -27,7 +27,7 @@ function pathIsAbsolute(route) {
   }
 }
 
-//funcion directorio o archivo
+//funcion directorio o archivo, retorna true si es directorio y false si es archivo.
 function dirOrFile(route) {
 
   try {
@@ -46,8 +46,8 @@ function dirOrFile(route) {
 
 }
 
-//funcion sacar archivo md.
-function extractFiles(typeOf, route) {
+//funcion sacar archivo md de directorio, retorna la ruta directa hacia el archivo a examinar.
+function extractPathMd(typeOf, route) {
   if (typeOf) {
     const dirContent = fs.readdirSync(route);
     console.log("llego a extraer archivos md");
@@ -61,49 +61,83 @@ function extractFiles(typeOf, route) {
   }
 }
 
-//hacer funcion en que entre el dir o file y ahi sacar una ruta definitiva si entra en el primer if o segundo if.
 
-//funcion leer archivo.
-//seguir viendo markdown it libreria.
-function readRoute(route) {
+//funcion archivo es md, devuelve true si es un archivo md.
+function mdFile(route) {
   const fileExt = path.extname(route);
-  console.log("llego a leer archivo");
-  console.log(fileExt);
+  console.log("Extension archivo: ", fileExt);
 
   try {
     if (fileExt === ".md") {
-      fs.readFile(route, 'utf-8', (err, data) => {
-        if (err) {
-          console.log('error: ', err);
-        } else {
-          // console.log(md.linkify.match(data));
-          const linkExtracted = md.linkify.match(data);
-          const arrayLinks = linkExtracted.map(element => element.url);
-          console.log(arrayLinks);
-          return arrayLinks;
-        }
-      })
+      return true
     }
     else {
       throw error;
     }
-
   } catch (error) {
     console.error("El archivo no es markdown")
 
   }
 }
 
-function linkProperties(route, arrayLinks) {
+
+// debe retornar un array con los links encontrados dentro del archivo md.
+function linksFounds(route, fileExt) {
+
+  return new Promise((resolve, reject) => {
+    fs.readFile(route, 'utf-8', (err, data) => {
+      if (err) {
+        console.log('error: ', err);
+        reject(err)
+      } else {
+        // console.log(md.linkify.match(data));
+        const linkExtracted = md.linkify.match(data);
+        const arrayLinks = linkExtracted.map(element => element.url);
+        console.log(arrayLinks);
+
+        /* pasar parte de esta funcionalidad a funcion linkProperties.
+        fetch(arrayLinks[0])
+          .then(response => {
+            console.log('Status: ', response.status);
+    
+          })
+          .catch(err => {
+            console.log("Resolver esto, al ingresar link inexistente");
+          })
+          */
+        resolve(arrayLinks)
+      }
+    }
+    )
+  })
 
 }
+
+
+function linkProperties(route, arrayLinks) {
+  const linksProps = [];
+
+  const listo = arrayLinks.map(element => {
+    new linkContructor(element.value)
+  });
+  console.log(listo);
+}
+
+class linkContructor {
+  constructor(href) {
+    this.href = href;
+  }
+}
+
 
 
 module.exports = {
   pathIsAbsolute,
   pathExist,
   dirOrFile,
-  readRoute,
-  extractFiles,
+  mdFile,
+  extractPathMd,
+  linkProperties,
+  linksFounds,
 }
 
