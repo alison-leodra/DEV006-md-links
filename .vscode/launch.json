@@ -13,7 +13,8 @@
       ],
       "program": "${workspaceFolder}//index.js",
       "args": [
-        "C:/Users/localhost/Desktop/laboratoria/proyecto4/pruena01.md"
+        "C:/Users/localhost/Desktop/laboratoria/proyecto4",
+        "{\"validate\": true}"
       ]
     }
   ]

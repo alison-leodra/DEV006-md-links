@@ -1,84 +1,25 @@
-/*
-C:/Users/localhost/Desktop/laboratoria/proyecto4/pruena01.md
 
-C:/Users/localhost/Desktop/laboratoria/pruebaDirectorio/prueba02.md
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
 
-C:/Users/localhost/Desktop/laboratoria/proyecto4
-
-../../proyecto4/pruena01.md
-
-../../pruebaDirectorio/prueba02.md
-
-../../proyecto4
-
-"C:/Users/localhost/Desktop/Pruebas/isla.png
-
-README.md
-*/
 const route = process.argv[2];
+const option = JSON.parse(process.argv[3]);
 const path = require('path');
 const fs = require('fs');
 const { promises } = require('dns');
-const { mdFile } = require('./mdLinkFunctions');
 const md = require('markdown-it')({
   html: true,
   linkify: true,
 });
-/*
-const { pathIsAbsolute, pathExist, dirOrFile, mdFile, extractPathMd, linkProperties, linksFounds } = require('./mdLinkFunctions');
-
-
-const mdLinks = (ruta, options) => {
-  return new Promise((resolve, reject) => {
-    // }
-    //funcion Ruta absoluta o relativa
-    let newRoute = pathIsAbsolute(ruta);
-
-    //funcion Ruta existente
-    pathExist(newRoute);
-
-    //funcion Directorio o archivo boolean
-    const typeOf = dirOrFile(newRoute);
-    //Si es directorio sacar solo archivo ext md.
-
-    newRoute = extractPathMd(typeOf, route);// esta devuelve ruta del archivo md del directorio o ruta solo de archivo.
-    console.log("Ruta del archivo encontrado: ", newRoute);
-
-    //leer ext archivo.
-    const fileExt = mdFile(newRoute); // devuelve true si el archivo encontrado es md.
-
-    linksFounds(newRoute, fileExt).then(value => {
-      resolve(value)
-    })// retorna array con los links dentro del archivo md.
-  })
-}
-
-mdLinks(route).then(value => console.log(`valor > ${value}`));
-
-
-// verificar o no links
-// devolver promesa con array con datos.
-
-//console.log(pathIsAbsolute(ruta));
-
-
-module.exports = {
-  mdLinks
-};
-
-*/
-
 
 const tranformPathToAbsolute = (route) => {
   return new Promise((resolve, reject) => {
-    //implementar logica para saber si es absoluta o no la ruta.
+
     if (path.isAbsolute(route)) {
-      console.log("La ruta es absoluta");
       resolve(route)
     }
     else {
       const newRoute = path.resolve(route);
-      console.log("La ruta relativa, ahora es absoluta ");
       resolve(newRoute)
     }
   })
@@ -86,7 +27,7 @@ const tranformPathToAbsolute = (route) => {
 
 const returnPathIfExists = (route) => {
   return new Promise((resolve, reject) => {
-    //implementar logica para saber si la ruta existe.
+
     const exist = fs.existsSync(route);
     if (exist) {
       resolve(route);
@@ -99,7 +40,6 @@ const returnPathIfExists = (route) => {
 const isPathDirectory = (route) => {
 
   if (fs.lstatSync(route).isDirectory()) {
-    console.log("Es directorio");
     return true;
   }
   return false;
@@ -108,7 +48,6 @@ const isPathDirectory = (route) => {
 const findMdFiles = (route) => {
   return new Promise((resolve, reject) => {
     const dirContent = fs.readdirSync(route);
-    console.log("llego a extraer archivos md");
     const dirFile = dirContent.filter(path => path.includes(".md"));
     const newPath = dirFile.map(element => path.join(route, element))
     resolve(newPath[0])
@@ -131,47 +70,108 @@ const readFile = (route) => {
       if (err) {
         reject(err)
       } else {
-        resolve(data)
+        resolve({
+          data: data,
+          route: route
+        })
       }
     }
     )
   })
 }
 
-const getLinks = (data) => {
-  //const properties = arrayLinks.map(element => new linkProperties(element, element.text))
-  const linkExtracted = md.linkify.match(data);
-  const arrayLinks = linkExtracted.map(element => ({
-    href: element.url,
-    text: element.text
-  }));
 
-  //const properties = arrayLinks.map(element => ({
-  //  href: element,
-  //  text: element.text
-  //}))
-  return arrayLinks
+const getLinks = (data) => {
+
+  let linkPropertiesNoValidate = [];
+
+  const fileMdToHTML = md.render(data.data);
+
+  const { document } = new JSDOM(fileMdToHTML).window
+
+  const allLinks = document.querySelectorAll('a')
+
+  allLinks.forEach(link => linkPropertiesNoValidate.push({
+    href: link.href,
+    text: link.textContent,
+    file: data.route
+  }));
+  return linkPropertiesNoValidate
 }
 
-tranformPathToAbsolute(route)
-  .then(result => {
-    return returnPathIfExists(result)
+const validateLink = (link) => {
+
+  const promiseValidateLink = new Promise((resolve, reject) => {
+    fetch(link.href)
+      .then(response => {
+        if (response.status >= 100 && response.status <= 399) {
+          resolve({
+            href: link.href,
+            text: link.text,
+            file: link.file,
+            status: response.status,
+            ok: 'ok'
+          })
+        }
+        resolve({
+          href: link.href,
+          text: link.text,
+          file: link.file,
+          status: response.status,
+          ok: 'fail'
+        })
+      })
+      .catch(err => {
+        resolve({
+          href: link.href,
+          text: link.text,
+          file: link.file,
+          status: "ENOTFOUND - fetch failed",
+          ok: 'fail'
+        });
+      })
   })
-  .then(path => {
-    if (isPathDirectory(path)) {
-      return findMdFiles(path)
-    }
-    return Promise.resolve(route)
+  return promiseValidateLink
+}
+
+function mdLink(route, option) {
+  return new Promise((resolve, reject) => {
+
+    tranformPathToAbsolute(route)
+      .then(result => {
+        return returnPathIfExists(result)
+      })
+      .then(path => {
+        if (isPathDirectory(path)) {
+          return findMdFiles(path)
+        }
+        return Promise.resolve(route)
+      })
+      .then(route => {
+        if (isMdFile(route)) {
+          return readFile(route)
+        }
+        return Promise.reject("El archivo no es markdown")
+      })
+      .then(data => {
+        const links = getLinks(data);
+        if (option.validate) {
+          const linkPromises = links.map(link => validateLink(link))
+          return Promise.all(linkPromises);
+        }
+        return links;
+      })
+      .then(promises => {
+        resolve(promises)
+      })
+      .catch(cause => {
+        reject(`la razon de fallo fue: ${cause}`);
+      })
+
   })
-  .then(route => {
-    if (isMdFile(route)) {
-      return readFile(route)
-    }
-    return Promise.reject("El archivo no es markdown")
-  })
-  .then(data => {
-    console.log(getLinks(data));
-  })
-  .catch(cause => {
-    console.log(`la razon de fallo fue: ${cause}`);
-  })
+}
+
+mdLink(route, option)
+  .then(promise => console.log(promise))
+  .catch(cause => console.log(cause))
+
