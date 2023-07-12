@@ -112,11 +112,11 @@ mdLinks("./some/dir")
 
 
 ## 2. Testing 
-                                                                                                                                                      
-File      | % Stmts | % Branch | % Funcs | % Lines |#s                                                                                                                                                                       
-----------|---------|----------|---------|---------|
-All files |   93.58 |       85 |   93.33 |   93.24 | 
- index.js |   93.58 |       85 |   93.33 |   93.24 | 
-----------|---------|----------|---------|---------|
-Test Suites: 1 passed, 1 total
-Tests:       22 passed, 22 total
+
+stmts : 93.58
+Branch : 85
+Funcs : 93.33
+Lines : 93.24
+
+test Suites : 1 passed, 1 total.
+Test : 22 passed, 22 total.
