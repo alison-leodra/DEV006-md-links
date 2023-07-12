@@ -27,6 +27,8 @@ Para la elaboracion de este proyecto se decidio seguir un camino guiado por func
 al momento que se terminaba una etapa se seguia con la siguiente, asi afrontar el reto 
 de forma paulatina.
 
+![image](DiagramaDeFlujo.png)
+
 
 ## Archivos del proyecto
 
