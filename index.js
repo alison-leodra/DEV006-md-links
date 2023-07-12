@@ -3,10 +3,9 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
 const route = process.argv[2];
-const option = JSON.parse(process.argv[3]);
+const option = { validate: true };
 const path = require('path');
 const fs = require('fs');
-const { promises } = require('dns');
 const md = require('markdown-it')({
   html: true,
   linkify: true,
@@ -16,11 +15,11 @@ const tranformPathToAbsolute = (route) => {
   return new Promise((resolve, reject) => {
 
     if (path.isAbsolute(route)) {
-      resolve(route)
+      resolve(route);
     }
     else {
       const newRoute = path.resolve(route);
-      resolve(newRoute)
+      resolve(newRoute);
     }
   })
 }
@@ -128,8 +127,8 @@ const validateLink = (link) => {
           file: link.file,
           status: "ENOTFOUND - fetch failed",
           ok: 'fail'
-        });
-      })
+        })
+      });
   })
   return promiseValidateLink
 }
@@ -175,3 +174,17 @@ mdLink(route, option)
   .then(promise => console.log(promise))
   .catch(cause => console.log(cause))
 
+
+
+
+module.exports = {
+  mdLink,
+  tranformPathToAbsolute,
+  returnPathIfExists,
+  isPathDirectory,
+  findMdFiles,
+  isMdFile,
+  readFile,
+  getLinks,
+  validateLink
+}
